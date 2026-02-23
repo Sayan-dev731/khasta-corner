@@ -37,7 +37,11 @@ const registerUser = asyncHandler(async (req, res) => {
         role,
     });
 
-    if (!user) {
+    const createdUser = await User.findById(user._id).select(
+        "-password -refreshToken"
+    )
+
+    if (!createdUser) {
         throw new ApiError(500, "Interal Server Error: Failed to create user");
     }
 

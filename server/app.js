@@ -4,7 +4,6 @@ import cors from "cors";
 import cookieParser from "cookie-parser";
 // import dotenv from "dotenv";
 
-
 // dotenv.config({
 //     path: "./.env",
 // });
@@ -30,5 +29,10 @@ import userRouter from "./routes/user.routes.js";
 
 // user route decleration
 app.use("/api/v1/users", userRouter);
+
+import menuRouter from "./routes/menu.routes.js";
+
+// menu route declaration
+app.use("/api/v1/menu", menuRouter);
 
 export default app;
