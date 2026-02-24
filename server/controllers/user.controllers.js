@@ -79,7 +79,7 @@ const loginUser = asyncHandler(async (req, res) => {
     const { email, phone, password } = req.body;
 
     // checkinf if the request body is empty or not
-    if (!email && !phone) {
+    if (!(email || phone)) {
         throw new ApiError(
             400,
             "Bad Request: Email and phone number are required for login"
