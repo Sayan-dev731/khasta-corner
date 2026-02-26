@@ -1,7 +1,10 @@
+/* global process */
+
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { User } from "../models/user.models.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
+import jwt from "jsonwebtoken";
 
 const generateTokens = async (userId) => {
     try {
@@ -78,7 +81,7 @@ const loginUser = asyncHandler(async (req, res) => {
     // geting the data from the frontend client
     const { email, phone, password } = req.body;
 
-    // checkinf if the request body is empty or not
+    // checking if the request body is empty or not
     if (!(email || phone)) {
         throw new ApiError(
             400,
@@ -134,4 +137,142 @@ const loginUser = asyncHandler(async (req, res) => {
         );
 });
 
-export { registerUser, loginUser };
+const logoutUser = asyncHandler(async (req, res) => {
+    //get the user Id from the request object
+    const user = req.user._id;
+
+    if (!user) {
+        throw new ApiError(404, "Not Found: User not found!");
+    }
+
+    // remove the refresh token from the database for the user
+    await User.findByIdAndUpdate(
+        user,
+        {
+            $set: {
+                refreshToken: null,
+            },
+        },
+        {
+            returnDocument: "after",
+        }
+    );
+
+    const options = {
+        httpOnly: true,
+        secure: true,
+    };
+
+    return res
+        .status(200)
+        .cookie("refreshToken", options)
+        .cookie("accessToken", options)
+        .json(new ApiResponse(200, null, "User logged out successfully"));
+});
+
+const refreshToken = asyncHandler(async (req, res) => {
+    // get the refresh token from the request headers or the cookies
+    const incomingRefreshToken =
+        req.cookies?.refreshToken ||
+        req.headers("Authorization")?.replace("Bearer ", "");
+
+    if (!incomingRefreshToken) {
+        throw new ApiError(401, "Unauthorized: No refresh token provided.");
+    }
+
+    try {
+        // verify the refresh token by decoding it
+        const decodeToken = jwt.verify(
+            incomingRefreshToken,
+            process.env.REFRESH_TOKEN_SECRET
+        );
+
+        //getting the user by the decoded token's user ID
+        const user = await User.findById(decodeToken._id).select(
+            "-password -refreshToken"
+        );
+
+        if (!user) {
+            throw new ApiError(404, "Not found: User not found.");
+        }
+
+        // check if the refresh token in the database matches the one provided in the request
+        if (user?.refreshToken !== incomingRefreshToken) {
+            throw new ApiError(401, "Unauthorized: Invalid refresh token.");
+        }
+
+        // generate new access token and refresh token
+        const { accessToken, newRefreshToken } = await generateTokens(user._id);
+
+        // // update the refresh token in the database
+        // user.refreshToken = newRefreshToken;
+
+        const options = {
+            httpOnly: true,
+            secure: true,
+        };
+
+        return res
+            .status(200)
+            .cookie("refreshToken", newRefreshToken, options)
+            .cookie("accessToken", accessToken, options)
+            .json(
+                new ApiResponse(
+                    200,
+                    {
+                        accessToken,
+                        refreshToken: newRefreshToken,
+                    },
+                    "Tokens refreshed Successfully"
+                )
+            );
+    } catch (error) {
+        throw new ApiError(
+            401,
+            error?.message || "Unauthorized: Invalid refresh token."
+        );
+    }
+});
+
+const changePassword = asyncHandler(async (req, res) => {
+    // get the user id from the request object passed by the auth middleware and find the user in the database
+    const user = await User.findById(req.user?._id);
+
+    if (!user) {
+        throw new ApiError(404, "Not Found: User not found!");
+    }
+    // get the old password, new password and confirm new password from the request body
+    const { oldPassword, newPassword, confirmPassword } = req.body;
+
+    // validate the input data
+    if (!oldPassword || !newPassword || !confirmPassword) {
+        throw new ApiError(400, "Bad Request: All fields are required");
+    }
+
+    if (newPassword !== confirmPassword) {
+        throw new ApiError(
+            400,
+            "Bad Request: The new password and the confirm new password do not match"
+        );
+    }
+
+    // check if the old password is correct by comparing it with the hashed password in the database
+    const isOldPasswordValid = await user.comparePassword(oldPassword);
+
+    if (!isOldPasswordValid) {
+        throw new ApiError(401, "Unauthorized: Old password is incorrect");
+    }
+
+    // if the old password is correct, hash the new password and replace the old password with the new password in the database
+    user.password = newPassword;
+
+    await user.save({
+        validateBeforeSave: false,
+    });
+
+    return res
+        .status(200)
+        .json(new ApiResponse(200, null, "Password changed successfully"));
+});
+
+export { registerUser, loginUser, logoutUser, refreshToken, changePassword };
