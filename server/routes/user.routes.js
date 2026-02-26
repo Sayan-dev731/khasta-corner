@@ -21,6 +21,6 @@ router.route("/logout").post(authMiddleware, logoutUser); // for logging out the
 
 router.route("/refresh-token").post(refreshToken);
 
-router.route("/change-password").post(authMiddleware, changePassword);;
+router.route("/change-password").post(authMiddleware, changePassword);
 
 export default router;

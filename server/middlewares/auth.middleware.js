@@ -7,17 +7,21 @@ import { User } from "../models/user.models.js";
 const authMiddleware = async (req, res, next) => {
     try {
         // get the token from the request header and remove the bearer prefix
-        const token = req.cookies?.accessToken || req.header("Authorization")?.replace("Bearer ", "");
+        const token =
+            req.cookies?.accessToken ||
+            req.header("Authorization")?.replace("Bearer ", "");
 
         if (!token) {
             throw new ApiError(401, "Unauthorized: No token provided");
         }
 
         // verify the token by decoding it.
-        const decodedToken = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET)
+        const decodedToken = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
 
         // find the user by the decoded token's user ID
-        const user = await User.findById(decodedToken._id).select("-password -refreshToken");
+        const user = await User.findById(decodedToken._id).select(
+            "-password -refreshToken"
+        );
 
         if (!user) {
             throw new ApiError(404, "Not Found: User not found");
@@ -27,8 +31,11 @@ const authMiddleware = async (req, res, next) => {
         req.user = user;
         next();
     } catch (error) {
-        throw new ApiError(401, error?.message || "Unauthorized: Invalid Token");
+        throw new ApiError(
+            401,
+            error?.message || "Unauthorized: Invalid Token"
+        );
     }
-}
+};
 
 export { authMiddleware };
