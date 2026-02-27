@@ -5,6 +5,7 @@ import { User } from "../models/user.models.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import jwt from "jsonwebtoken";
+import { deleteFile, uploadFiles } from "../utils/cloudinary.js";
 
 const generateTokens = async (userId) => {
     try {
@@ -43,6 +44,18 @@ const registerUser = asyncHandler(async (req, res) => {
         throw new ApiError(400, "Bad Request: All fields are required");
     }
 
+    const allowedRoles = ["User", "Admin"];
+
+    if (!allowedRoles.includes(role)) {
+        throw new ApiError(400, "Bad Request: Invalid role provided");
+    }
+
+    const localProfileImagePath = req.file?.path;
+
+    if (!localProfileImagePath) {
+        throw new ApiError(400, "Bad Request: Profile image is required");
+    }
+
     // check if the user already exists
     const userExists = await User.findOne({
         $or: [{ email }, { phone }],
@@ -55,12 +68,23 @@ const registerUser = asyncHandler(async (req, res) => {
         );
     }
 
+    //upload the profile image to cloudinary and ge the url
+    const profileImageUrl = await uploadFiles(localProfileImagePath);
+
+    if (!profileImageUrl.url) {
+        throw new ApiError(
+            500,
+            "Internal Server Error: Failed to upload the profile image to cloudinary"
+        );
+    }
+
     //create the user in the database
     const user = await User.create({
         fullName,
         email,
         password,
         phone,
+        profileImage: profileImageUrl.url,
         role,
     });
 
@@ -275,4 +299,137 @@ const changePassword = asyncHandler(async (req, res) => {
         .json(new ApiResponse(200, null, "Password changed successfully"));
 });
 
-export { registerUser, loginUser, logoutUser, refreshToken, changePassword };
+const updateAccountDetails = asyncHandler(async (req, res) => {
+    // get the details to be updated from the request body
+    const { fullName, email, phone } = req.body;
+
+    // validate the input data
+    if (!fullName && !email && !phone) {
+        throw new ApiError(
+            400,
+            "Bad Request: At least one field is required to update the account details"
+        );
+    }
+
+    // find the user id and update the account details in the database
+    const user = await User.findByIdAndUpdate(
+        req.user?._id,
+        {
+            $set: {
+                fullName,
+                email: email?.toLowerCase(),
+                phone,
+            },
+        },
+        {
+            returnDocument: "after",
+        }
+    ).select("-password");
+
+    return res
+        .status(200)
+        .json(
+            new ApiResponse(200, user, "Account details updated successfully")
+        );
+});
+
+const getCurrentUser = asyncHandler(async (req, res) => {
+    return res
+        .status(200)
+        .json(
+            new ApiResponse(
+                200,
+                req.user,
+                "Current user details fetched successfully"
+            )
+        );
+});
+
+const updateProfileImage = asyncHandler(async (req, res) => {
+    // get the new image path from the request file object
+    const localProfileImagePath = req.file?.path;
+
+    if (!localProfileImagePath) {
+        throw new ApiError(400, "Bad Request: Profile image is required");
+    }
+
+    // delete the existing profile image from cloudinary
+    const deleteProfileImage = await deleteFile(req.user?.profileImage);
+
+    if (!deleteProfileImage) {
+        throw new ApiError(
+            500,
+            "Interal Server Error: Failed to delete the existing profile image from cloudinary"
+        );
+    }
+
+    const newProfileImage = await uploadFiles(localProfileImagePath);
+
+    if (!newProfileImage.url) {
+        throw new ApiError(
+            500,
+            "Internal Server Error: Failed to upload the profile image to cloudinary"
+        );
+    }
+
+    const updateUserProfileImage = await User.findByIdAndUpdate(
+        req.user?._id,
+        {
+            $set: {
+                profileImage: newProfileImage.url,
+            },
+        },
+        {
+            returnDocument: "after",
+        }
+    );
+
+    if (!updateUserProfileImage) {
+        throw new ApiError(
+            500,
+            "Internal Server Error: Failed to update the profile image in the database"
+        );
+    }
+
+    return res
+        .status(200)
+        .json(new ApiResponse(200, null, "Profile image updated successfully"));
+});
+
+const deleteAccount = asyncHandler(async (req, res) => {
+    // get the user from the auth middleware
+    const user = await User.findById(req.user?._id);
+
+    if (!user) {
+        throw new ApiError(404, "Not Found: User not found!");
+    }
+
+    // delete the profile image from the cloudinary
+    const deleteProfileImage = await deleteFile(user.profileImage);
+
+    if (!deleteProfileImage) {
+        throw new ApiError(
+            500,
+            "Internal Server Error: Failed to delete the profile image from cloudinary"
+        );
+    }
+
+    // delete the user profile from the database
+    await User.findByIdAndDelete(req.user?._id);
+
+    return res
+        .status(200)
+        .json(new ApiResponse(200, null, "User account deleted successfully"));
+});
+
+export {
+    registerUser,
+    loginUser,
+    logoutUser,
+    refreshToken,
+    changePassword,
+    updateAccountDetails,
+    getCurrentUser,
+    updateProfileImage,
+    deleteAccount,
+};

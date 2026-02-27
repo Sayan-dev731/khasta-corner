@@ -5,13 +5,17 @@ import {
     logoutUser,
     refreshToken,
     changePassword,
+    updateAccountDetails,
+    getCurrentUser,
+    updateProfileImage,
+    deleteAccount,
 } from "../controllers/user.controllers.js";
 import { upload } from "../middlewares/multer.middleware.js";
 import { authMiddleware } from "../middlewares/auth.middleware.js";
 
 const router = express.Router();
 
-router.route("/register").post(upload.none(), registerUser); // using multer to handle multipart/form-data, but since we are not uploading any files, we use upload.none() to parse the form data without expecting any files.
+router.route("/register").post(upload.single("profileImage"), registerUser); // using multer to handle multipart/form-data, but since we are not uploading any files, we use upload.none() to parse the form data without expecting any files.
 
 router.route("/login").post(loginUser); // for logging in the user in the web app.
 
@@ -22,5 +26,15 @@ router.route("/logout").post(authMiddleware, logoutUser); // for logging out the
 router.route("/refresh-token").post(refreshToken);
 
 router.route("/change-password").post(authMiddleware, changePassword);
+
+router.route("/update-profile").post(authMiddleware, updateAccountDetails);
+
+router.route("/get-user").get(authMiddleware, getCurrentUser);
+
+router
+    .route("/update-profile-image")
+    .post(authMiddleware, upload.single("profileImage"), updateProfileImage);
+
+router.route("/delete-account").delete(authMiddleware, deleteAccount);
 
 export default router;

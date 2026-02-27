@@ -26,6 +26,10 @@ const userSchema = new mongoose.Schema(
             required: true,
             unique: true,
         },
+        profileImage: {
+            type: String,
+            required: true,
+        },
         isVerified: {
             type: Boolean,
             default: false,
@@ -33,7 +37,7 @@ const userSchema = new mongoose.Schema(
         role: {
             type: String,
             enum: ["User", "Admin"],
-            required: true
+            required: true,
         },
         refreshToken: {
             type: String,
