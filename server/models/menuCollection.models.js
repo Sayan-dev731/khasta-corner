@@ -15,12 +15,10 @@ const menuCollectionSchema = new mongoose.Schema(
             required: true,
         },
         // the url will be stored in the database, the actual image will be stored in a cloud storage service Cloudinary
-        imageFood: [
-            {
-                type: String,
-                required: true,
-            },
-        ],
+        imageFood: {
+            type: String,
+            required: true,
+        },
         isAvailable: {
             type: Boolean,
             default: true,
