@@ -1,0 +1,247 @@
+/* ===== ADMIN MENU PAGE ===== */
+.admin-page {
+    min-height: 100vh;
+    padding: calc(var(--nav-height) + 3rem) 0 4rem;
+}
+
+.admin-container {
+    max-width: 900px;
+}
+
+.admin-header {
+    margin-bottom: 2rem;
+}
+
+.admin-header h2 {
+    font-size: clamp(2.5rem, 6vw, 4rem);
+    margin-top: 0.5rem;
+}
+
+.admin-no-access {
+    text-align: center;
+    padding: calc(var(--nav-height) + 4rem) 2rem;
+}
+
+.admin-no-access h3 {
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+}
+
+.admin-no-access p {
+    color: var(--text-light-muted);
+}
+
+/* Tabs */
+.admin-tabs {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 2rem;
+    padding: 4px;
+    background: rgba(245, 237, 227, 0.05);
+    border-radius: var(--radius-pill);
+    width: fit-content;
+}
+
+.admin-tab {
+    padding: 0.7rem 2rem;
+    font-size: 0.85rem;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    border-radius: var(--radius-pill);
+    color: var(--text-light-muted);
+    transition: all var(--duration-fast) var(--ease-smooth);
+}
+
+.admin-tab.active {
+    background: var(--terracotta);
+    color: var(--cream);
+}
+
+.admin-tab:hover:not(.active) {
+    color: var(--text-light);
+}
+
+/* Admin Card */
+.admin-card {
+    background: var(--bg-dark-secondary);
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-lg);
+    padding: 2.5rem;
+}
+
+.admin-card h3 {
+    font-size: 1.4rem;
+    margin-bottom: 1.5rem;
+}
+
+/* Admin Form */
+.admin-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
+}
+
+/* Lookup Form */
+.admin-lookup-form {
+    display: flex;
+    gap: 1rem;
+    align-items: flex-end;
+    margin-bottom: 2rem;
+}
+
+.admin-lookup-form .form-group {
+    flex: 1;
+}
+
+/* Item Display */
+.admin-item-display {
+    border-top: 1px solid var(--border-light);
+    padding-top: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.admin-item-preview {
+    display: flex;
+    gap: 1.5rem;
+    align-items: flex-start;
+}
+
+.admin-item-image {
+    width: 160px;
+    height: 120px;
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    flex-shrink: 0;
+    border: 1px solid var(--border-light);
+}
+
+.admin-item-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.admin-item-info h4 {
+    font-size: 1.3rem;
+    margin-bottom: 0.4rem;
+}
+
+.admin-item-info p {
+    color: var(--text-light-muted);
+    font-size: 0.9rem;
+    margin-bottom: 0.8rem;
+}
+
+.admin-item-meta {
+    display: flex;
+    gap: 0.6rem;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.category-tag {
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.05em;
+    padding: 0.3rem 0.8rem;
+    border-radius: var(--radius-pill);
+    background: rgba(212, 167, 84, 0.15);
+    color: var(--saffron);
+    border: 1px solid rgba(212, 167, 84, 0.3);
+}
+
+.status-tag {
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.05em;
+    padding: 0.3rem 0.8rem;
+    border-radius: var(--radius-pill);
+}
+
+.status-tag.available {
+    background: rgba(0, 150, 108, 0.15);
+    color: var(--jade);
+    border: 1px solid rgba(0, 150, 108, 0.3);
+}
+
+.status-tag.unavailable {
+    background: rgba(232, 75, 48, 0.15);
+    color: var(--chili-red);
+    border: 1px solid rgba(232, 75, 48, 0.3);
+}
+
+/* Actions */
+.admin-item-actions {
+    display: flex;
+    gap: 0.8rem;
+}
+
+/* Edit Form */
+.admin-edit-form {
+    padding: 1.5rem;
+    background: rgba(245, 237, 227, 0.02);
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-md);
+}
+
+/* Image Update */
+.admin-image-update {
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border-light);
+}
+
+.admin-image-update h4 {
+    font-size: 1rem;
+    margin-bottom: 1rem;
+}
+
+.admin-image-row {
+    display: flex;
+    gap: 1rem;
+    align-items: flex-end;
+}
+
+.image-upload-sm {
+    width: 100px;
+    height: 80px;
+}
+
+.image-upload-sm .image-placeholder {
+    gap: 0.3rem;
+}
+
+.image-upload-sm .image-placeholder span {
+    font-size: 0.6rem;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 640px) {
+    .admin-card {
+        padding: 1.8rem 1.4rem;
+    }
+
+    .admin-lookup-form {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .admin-item-preview {
+        flex-direction: column;
+    }
+
+    .admin-item-image {
+        width: 100%;
+        height: 180px;
+    }
+
+    .admin-item-actions {
+        flex-direction: column;
+    }
+
+    .admin-image-row {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+}

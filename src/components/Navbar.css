@@ -116,6 +116,34 @@
     box-shadow: 0 10px 30px rgba(194, 112, 62, 0.35);
 }
 
+.navbar-cta-profile {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.nav-avatar {
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background: var(--terracotta);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-display);
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: var(--cream);
+    overflow: hidden;
+    flex-shrink: 0;
+}
+
+.nav-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
 /* Hamburger */
 .menu-toggle {
     display: none;

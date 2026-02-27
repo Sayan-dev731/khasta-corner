@@ -1,11 +1,12 @@
 import { useEffect, useRef, useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import gsap from 'gsap'
+import { useAuth } from '../context/useAuth'
 import RotatingBadge from './RotatingBadge'
 import MagneticButton from './MagneticButton'
 import './Navbar.css'
 
-const navLinks = [
+const baseNavLinks = [
   { label: 'Home', path: '/' },
   { label: 'Menu', path: '/menu' },
   { label: 'Our Story', path: '/story' },
@@ -17,6 +18,8 @@ const linkImages = {
   '/menu': 'https://images.unsplash.com/photo-1596797038530-2c107229654b?w=300&q=60',
   '/story': 'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=300&q=60',
   '/contact': 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=300&q=60',
+  '/admin/menu': 'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=300&q=60',
+  '/profile': 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=300&q=60',
 }
 
 export default function Navbar() {
@@ -27,6 +30,13 @@ export default function Navbar() {
   const navRef = useRef(null)
   const menuRef = useRef(null)
   const tl = useRef(null)
+  const { user, isAdmin } = useAuth()
+
+  // Build dynamic nav links
+  const navLinks = [...baseNavLinks]
+  if (isAdmin) {
+    navLinks.push({ label: 'Admin', path: '/admin/menu' })
+  }
 
   useEffect(() => {
     const handleScroll = () => {
@@ -116,11 +126,26 @@ export default function Navbar() {
           </div>
 
           <div className="navbar-right">
-            <MagneticButton strength={0.25}>
-              <Link to="/contact" className="navbar-cta">
-                Visit Us
-              </Link>
-            </MagneticButton>
+            {user ? (
+              <MagneticButton strength={0.25}>
+                <Link to="/profile" className="navbar-cta navbar-cta-profile">
+                  <span className="nav-avatar">
+                    {user.profileImage ? (
+                      <img src={user.profileImage} alt="" />
+                    ) : (
+                      user.fullName?.charAt(0).toUpperCase()
+                    )}
+                  </span>
+                  Profile
+                </Link>
+              </MagneticButton>
+            ) : (
+              <MagneticButton strength={0.25}>
+                <Link to="/login" className="navbar-cta">
+                  Login
+                </Link>
+              </MagneticButton>
+            )}
             <button
               className={`menu-toggle ${menuOpen ? 'open' : ''}`}
               onClick={() => setMenuOpen(!menuOpen)}
@@ -163,6 +188,17 @@ export default function Navbar() {
 
           <div className="mobile-nav-footer">
             <div className="mobile-footer-col">
+              <span className="text-label">Account</span>
+              {user ? (
+                <Link to="/profile" onClick={() => setMenuOpen(false)}>Profile</Link>
+              ) : (
+                <>
+                  <Link to="/login" onClick={() => setMenuOpen(false)}>Login</Link>
+                  <Link to="/register" onClick={() => setMenuOpen(false)}>Register</Link>
+                </>
+              )}
+            </div>
+            <div className="mobile-footer-col">
               <span className="text-label">Contact</span>
               <a href="tel:9103777757">910 377 7757</a>
             </div>
@@ -171,10 +207,6 @@ export default function Navbar() {
               <a href="https://instagram.com/khasta_corner_" target="_blank" rel="noopener noreferrer">
                 Instagram
               </a>
-            </div>
-            <div className="mobile-footer-col">
-              <span className="text-label">Hours</span>
-              <span className="mobile-footer-hours">Mon-Sat 8AM-10PM</span>
             </div>
           </div>
         </div>

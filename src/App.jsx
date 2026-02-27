@@ -8,10 +8,15 @@ import Footer from './components/Footer'
 import LoadingScreen from './components/LoadingScreen'
 import CustomCursor from './components/CustomCursor'
 import PageTransition from './components/PageTransition'
+import ProtectedRoute from './components/ProtectedRoute'
 import Home from './pages/Home'
 import Menu from './pages/Menu'
 import Story from './pages/Story'
 import Contact from './pages/Contact'
+import Login from './pages/Login'
+import Register from './pages/Register'
+import Profile from './pages/Profile'
+import AdminMenu from './pages/AdminMenu'
 import './App.css'
 
 gsap.registerPlugin(ScrollTrigger)
@@ -72,6 +77,24 @@ function App() {
               <Route path="/menu" element={<Menu />} />
               <Route path="/story" element={<Story />} />
               <Route path="/contact" element={<Contact />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/register" element={<Register />} />
+              <Route
+                path="/profile"
+                element={
+                  <ProtectedRoute>
+                    <Profile />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/admin/menu"
+                element={
+                  <ProtectedRoute adminOnly>
+                    <AdminMenu />
+                  </ProtectedRoute>
+                }
+              />
             </Routes>
           </main>
         </PageTransition>
