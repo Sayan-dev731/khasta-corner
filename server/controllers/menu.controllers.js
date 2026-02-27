@@ -109,10 +109,10 @@ const editMenu = asyncHandler(async (req, res) => {
 
     const { name, description, price, category, isAvailable } = req.body;
 
-    if (!name && !description && !price && !category && !isAvailable) {
+    if (!name || !description || !price || !category || !isAvailable) {
         throw new ApiError(
             400,
-            "Bad Request: At least one field is required to update the menu item"
+            "Bad Request: All fields are required to update the menu item"
         );
     }
 

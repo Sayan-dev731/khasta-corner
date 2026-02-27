@@ -304,10 +304,10 @@ const updateAccountDetails = asyncHandler(async (req, res) => {
     const { fullName, email, phone } = req.body;
 
     // validate the input data
-    if (!fullName && !email && !phone) {
+    if (!fullName || !email || !phone) {
         throw new ApiError(
             400,
-            "Bad Request: At least one field is required to update the account details"
+            "Bad Request: All fields are required to update the account details"
         );
     }
 
