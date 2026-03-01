@@ -42,9 +42,21 @@ export default function AdminMenu() {
 
   useEffect(() => {
     const ctx = gsap.context(() => {
-      gsap.fromTo('.admin-card',
-        { y: 40, opacity: 0 },
-        { y: 0, opacity: 1, duration: 0.7, ease: 'power3.out', delay: 0.2 }
+      const tl = gsap.timeline({ defaults: { ease: 'power3.out' } })
+
+      tl.fromTo('.admin-header',
+        { y: 30, opacity: 0 },
+        { y: 0, opacity: 1, duration: 0.6 }
+      )
+      .fromTo('.admin-tabs',
+        { y: 20, opacity: 0 },
+        { y: 0, opacity: 1, duration: 0.5 },
+        '-=0.3'
+      )
+      .fromTo('.admin-card',
+        { y: 40, opacity: 0, scale: 0.98 },
+        { y: 0, opacity: 1, scale: 1, duration: 0.7 },
+        '-=0.2'
       )
     }, pageRef)
     return () => ctx.revert()

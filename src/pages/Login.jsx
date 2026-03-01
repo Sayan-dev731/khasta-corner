@@ -19,13 +19,21 @@ export default function Login() {
 
   useEffect(() => {
     const ctx = gsap.context(() => {
-      gsap.fromTo('.auth-card',
-        { y: 60, opacity: 0 },
-        { y: 0, opacity: 1, duration: 0.8, ease: 'power3.out', delay: 0.2 }
+      const tl = gsap.timeline({ defaults: { ease: 'power3.out' } })
+
+      tl.fromTo('.auth-hero-text span',
+        { y: 50, opacity: 0, rotateX: -15 },
+        { y: 0, opacity: 1, rotateX: 0, stagger: 0.12, duration: 0.7 }
       )
-      gsap.fromTo('.auth-hero-text span',
-        { y: 40, opacity: 0 },
-        { y: 0, opacity: 1, stagger: 0.1, duration: 0.6, ease: 'power3.out', delay: 0.4 }
+      .fromTo('.auth-card',
+        { y: 50, opacity: 0, scale: 0.97 },
+        { y: 0, opacity: 1, scale: 1, duration: 0.8 },
+        '-=0.3'
+      )
+      .fromTo('.auth-card-header, .auth-method-toggle, .auth-form .form-group, .auth-submit-btn, .auth-footer',
+        { y: 20, opacity: 0 },
+        { y: 0, opacity: 1, stagger: 0.07, duration: 0.5 },
+        '-=0.4'
       )
     }, pageRef)
     return () => ctx.revert()

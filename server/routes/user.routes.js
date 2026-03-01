@@ -27,13 +27,13 @@ router.route("/refresh-token").post(refreshToken);
 
 router.route("/change-password").post(authMiddleware, changePassword);
 
-router.route("/update-profile").post(authMiddleware, updateAccountDetails);
+router.route("/update-profile").patch(authMiddleware, updateAccountDetails);
 
 router.route("/get-user").get(authMiddleware, getCurrentUser);
 
 router
     .route("/update-profile-image")
-    .post(authMiddleware, upload.single("profileImage"), updateProfileImage);
+    .patch(authMiddleware, upload.single("profileImage"), updateProfileImage);
 
 router.route("/delete-account").delete(authMiddleware, deleteAccount);
 

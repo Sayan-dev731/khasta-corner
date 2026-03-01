@@ -32,13 +32,26 @@ export default function Profile() {
 
   useEffect(() => {
     const ctx = gsap.context(() => {
-      gsap.fromTo('.profile-card',
-        { y: 40, opacity: 0 },
-        { y: 0, opacity: 1, duration: 0.7, ease: 'power3.out', delay: 0.2 }
-      )
-      gsap.fromTo('.profile-section',
+      const tl = gsap.timeline({ defaults: { ease: 'power3.out' } })
+
+      tl.fromTo('.profile-header-section',
         { y: 30, opacity: 0 },
-        { y: 0, opacity: 1, stagger: 0.15, duration: 0.6, ease: 'power3.out', delay: 0.4 }
+        { y: 0, opacity: 1, duration: 0.6 }
+      )
+      .fromTo('.profile-card',
+        { y: 40, opacity: 0, scale: 0.98 },
+        { y: 0, opacity: 1, scale: 1, duration: 0.7 },
+        '-=0.3'
+      )
+      .fromTo('.profile-avatar-section',
+        { y: 20, opacity: 0 },
+        { y: 0, opacity: 1, duration: 0.5 },
+        '-=0.3'
+      )
+      .fromTo('.profile-section',
+        { y: 25, opacity: 0 },
+        { y: 0, opacity: 1, stagger: 0.12, duration: 0.5 },
+        '-=0.2'
       )
     }, pageRef)
     return () => ctx.revert()

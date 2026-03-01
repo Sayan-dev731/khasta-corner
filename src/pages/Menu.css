@@ -61,11 +61,12 @@
     position: sticky;
     top: 70px;
     z-index: 100;
-    background: rgba(12, 10, 9, 0.85);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    border-bottom: 1px solid var(--border-light);
+    background: rgba(12, 10, 9, 0.88);
+    backdrop-filter: blur(24px) saturate(1.2);
+    -webkit-backdrop-filter: blur(24px) saturate(1.2);
+    border-bottom: 1px solid rgba(245, 237, 227, 0.06);
     padding: 1rem 0;
+    transition: background 0.4s;
 }
 
 .category-filter {
@@ -77,22 +78,23 @@
 
 .category-pill {
     padding: 0.6rem 1.6rem;
-    font-size: 0.8rem;
+    font-size: 0.78rem;
     font-weight: 500;
-    letter-spacing: 0.05em;
-    border: 1px solid var(--border-light);
+    letter-spacing: 0.06em;
+    border: 1px solid rgba(245, 237, 227, 0.1);
     border-radius: var(--radius-pill);
     color: var(--text-light-muted);
     background: transparent;
-    transition: all var(--duration-fast) var(--ease-smooth);
+    transition: all 0.4s var(--ease-smooth);
     cursor: pointer;
 }
 
 .category-pill:hover {
-    background: rgba(194, 112, 62, 0.15);
+    background: rgba(194, 112, 62, 0.12);
     border-color: var(--terracotta);
     color: var(--text-light);
-    box-shadow: 0 4px 20px rgba(194, 112, 62, 0.2);
+    box-shadow: 0 4px 20px rgba(194, 112, 62, 0.15);
+    transform: translateY(-1px);
 }
 
 .category-pill.active {
@@ -102,6 +104,7 @@
     color: var(--cream);
     border-color: transparent;
     box-shadow: 0 6px 25px rgba(194, 112, 62, 0.3);
+    transform: translateY(-1px);
 }
 
 /* Menu sections */
@@ -119,7 +122,7 @@
     align-items: baseline;
     justify-content: space-between;
     padding-bottom: 1.5rem;
-    border-bottom: 1px solid var(--border-light);
+    border-bottom: 1px solid rgba(245, 237, 227, 0.08);
     margin-bottom: var(--space-md);
 }
 
@@ -143,14 +146,15 @@
 .menu-card {
     position: relative;
     background: var(--bg-dark-secondary);
-    border: 1px solid var(--border-light);
+    border: 1px solid rgba(245, 237, 227, 0.08);
     border-radius: var(--radius-md);
     padding: 1.8rem;
     display: flex;
     flex-direction: column;
     gap: 0.8rem;
-    transition: all var(--duration-normal) var(--ease-smooth);
+    transition: all 0.5s var(--ease-smooth);
     overflow: hidden;
+    will-change: transform;
 }
 
 .menu-card-accent {
@@ -159,17 +163,20 @@
     left: 0;
     width: 100%;
     height: 3px;
-    background: var(--terracotta);
+    background: var(--gradient-cta);
+    background-size: 200% 200%;
+    animation: gradient-shift 3.5s ease infinite;
     transform: scaleX(0);
     transform-origin: left;
-    transition: transform var(--duration-normal) var(--ease-smooth);
+    transition: transform 0.5s var(--ease-smooth);
 }
 
 .menu-card:hover {
-    transform: translateY(-6px);
-    border-color: var(--terracotta);
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3),
-        0 0 0 1px rgba(194, 112, 62, 0.1);
+    transform: translateY(-8px);
+    border-color: rgba(194, 112, 62, 0.2);
+    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.3),
+        0 0 0 1px rgba(194, 112, 62, 0.08),
+        0 0 40px rgba(194, 112, 62, 0.04);
 }
 
 .menu-card:hover .menu-card-accent {
@@ -222,6 +229,12 @@
     padding: 0.3rem 1rem;
     border-radius: var(--radius-pill);
     font-weight: 500;
+    transition: all 0.35s var(--ease-smooth);
+}
+
+.menu-card:hover .price-badge {
+    box-shadow: 0 4px 12px rgba(212, 167, 84, 0.3);
+    transform: scale(1.03);
 }
 
 /* CTA */
