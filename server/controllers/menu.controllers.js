@@ -4,6 +4,21 @@ import { asyncHandler } from "../utils/asyncHandler.js";
 import { MenuCollection } from "../models/menuCollection.models.js";
 import { deleteFile, uploadFiles } from "../utils/cloudinary.js";
 
+//get all menu items and it can be accessed publicly without authentication
+const getMenu = asyncHandler(async (req, res) => {
+    const menuItems = await MenuCollection.find().select(
+        "-createdAt -updatedAt -__v"
+    );
+
+    if (!menuItems || menuItems.length === 0) {
+        throw new ApiError(404, "Menu items not found");
+    }
+
+    return res.json(
+        new ApiResponse(200, menuItems, "Menu items fetched successfully")
+    );
+});
+
 const addMenu = asyncHandler(async (req, res) => {
     // check if the requested files are there or not
     if (!req.files && !req.files.imageFood) {
@@ -88,7 +103,7 @@ const addMenu = asyncHandler(async (req, res) => {
     return res.json(new ApiResponse(200, null, "Menu item Added Successfully"));
 });
 
-const getMenu = asyncHandler(async (req, res) => {
+const getMenuItem = asyncHandler(async (req, res) => {
     const menuItems = await MenuCollection.findById(req.params?._id);
 
     if (!menuItems) {
@@ -259,4 +274,11 @@ const deleteMenuItem = asyncHandler(async (req, res) => {
         .json(new ApiResponse(200, null, "Menu item deleted successfully"));
 });
 
-export { addMenu, getMenu, editMenu, editMenuItemImage, deleteMenuItem };
+export {
+    addMenu,
+    getMenuItem,
+    editMenu,
+    editMenuItemImage,
+    deleteMenuItem,
+    getMenu,
+};
